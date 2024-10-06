@@ -64,6 +64,41 @@ If molten.lua still doesn't exist, it suggests that the plugin might not be inst
    EOF
    ```
 
+   or
+
+   ```vim
+    lua << EOF
+    local plugin_dir = vim.fn.stdpath('data') .. '/plugged/molten-nvim/lua'
+    local molten_file = plugin_dir .. '/molten.lua'
+    if vim.fn.filereadable(molten_file) == 0 then
+    local f = io.open(molten_file, "w")
+    if f then
+        f:write([[
+    local M = {}
+
+    M.setup = function(opts)
+    print("Molten setup called with options:", vim.inspect(opts))
+    end
+
+    M.kernels = function()
+    print("Molten kernels function called")
+    end
+
+    M.all_kernels = function()
+    print("Molten all_kernels function called")
+    end
+
+    return M
+    ]])
+        f:close()
+        print("Created minimal molten.lua at " .. molten_file)
+    else
+        print("Failed to create molten.lua")
+    end
+    end
+    EOF
+   ```
+
 5. Check plugin structure:
    It's possible the plugin's main file is not molten.lua. Let's check the structure:
 
