@@ -1,4 +1,4 @@
-call plug#begin()
+call plug#begin('C:/Users/ashry/AppData/Local/nvim-data/plugged')
 " Existing plugins
 Plug 'https://github.com/junegunn/vim-easy-align.git'
 Plug 'junegunn/fzf', { 'do': './install --all' }
@@ -44,6 +44,9 @@ Plug 'jmcantrell/vim-virtualenv'
 " Add NeoSolarized colorscheme
 Plug 'Tsuzat/NeoSolarized.nvim', { 'branch': 'master' }
 
+" Add molten-nvim
+Plug 'benlubas/molten-nvim'
+
 call plug#end()
 
 syntax enable
@@ -62,16 +65,6 @@ let g:EasyMotion_smartcase = 1
 let g:NERDTreeAutoRefresh = 1
 let g:NERDTreeAutoDeleteBuffer = 1
 let g:NERDTreeShowHidden = 1
-
-" Function to refresh NERDTree
-function! NERDTreeRefresh()
-    if &filetype == "nerdtree"
-        silent exe substitute(mapcheck("R"), "<CR>", "", "")
-    endif
-endfunction
-
-" Auto refresh NERDTree
-autocmd BufEnter * call NERDTreeRefresh()
 
 " Ensure correct search navigation
 nnoremap <expr> n  'Nn'[v:searchforward]
@@ -192,3 +185,6 @@ luafile ~/AppData/Local/nvim/lua/lsp_config.lua
 
 " At the end of your init.vim, add:
 lua require('config')
+
+" Add require molten-nvim
+lua require('molten-nvim').setup()
