@@ -1,4 +1,4 @@
-call plug#begin('C:/Users/ashry/AppData/Local/nvim-data/plugged')
+call plug#begin('~/AppData/Local/nvim-data/plugged')
 " Existing plugins
 Plug 'https://github.com/junegunn/vim-easy-align.git'
 Plug 'junegunn/fzf', { 'do': './install --all' }
@@ -186,37 +186,48 @@ luafile ~/AppData/Local/nvim/lua/lsp_config.lua
 " At the end of your init.vim, add:
 lua require('config')
 
-" Molten-nvim setup
 lua << EOF
-local plugin_dir = vim.fn.stdpath('data') .. '/plugged/molten-nvim/lua'
-package.path = package.path .. ';' .. plugin_dir .. '/?.lua;' .. plugin_dir .. '/?/init.lua'
-
-local init_file = plugin_dir .. '/molten/init.lua'
-if vim.fn.filereadable(init_file) == 0 then
-  vim.fn.mkdir(vim.fn.fnamemodify(init_file, ':h'), 'p')
-  local f = io.open(init_file, "w")
-  if f then
-    f:write("return require('molten.status')")
-    f:close()
-    print("Created " .. init_file)
-  end
-end
-
 local ok, molten = pcall(require, "molten")
 if ok then
   print("Molten loaded successfully")
-  if type(molten) == "table" and type(molten.setup) == "function" then
-    molten.setup{}
+  
+  -- Set up the plugin
+  if type(molten.setup) == "function" then
+    molten.setup()
     print("Molten setup completed")
-  else
-    print("Molten loaded, but setup function not found")
-    print("Molten type: " .. type(molten))
-    if type(molten) == "table" then
-      for k, v in pairs(molten) do
-        print(k, type(v))
-      end
-    end
   end
+
+  -- Create commands
+  vim.api.nvim_create_user_command("MoltenInit", function()
+    if type(molten.setup) == "function" then
+      molten.setup()
+      print("Molten initialized")
+    else
+      print("Molten setup function not available")
+    end
+  end, {})
+
+  vim.api.nvim_create_user_command("MoltenEvaluateLine", function()
+    if type(molten.kernels) == "function" then
+      molten.kernels()
+    else
+      print("Molten kernels function not available")
+    end
+  end, {})
+
+  vim.api.nvim_create_user_command("MoltenAllKernels", function()
+    if type(molten.all_kernels) == "function" then
+      molten.all_kernels()
+    else
+      print("Molten all_kernels function not available")
+    end
+  end, {})
+
+  -- Set up keybindings
+  vim.api.nvim_set_keymap('n', '<LocalLeader>mi', ':MoltenInit<CR>', {noremap = true, silent = true})
+  vim.api.nvim_set_keymap('n', '<LocalLeader>me', ':MoltenEvaluateLine<CR>', {noremap = true, silent = true})
+  vim.api.nvim_set_keymap('n', '<LocalLeader>mk', ':MoltenAllKernels<CR>', {noremap = true, silent = true})
+
 else
   print("Failed to load molten:", molten)
 end
