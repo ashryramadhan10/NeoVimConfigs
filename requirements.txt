@@ -1,0 +1,9 @@
+# need python>=3.10
+# pip install 'python-lsp-server[all]'
+pynvim
+jupyter_client
+notebook
+jedi
+jedi-language-server
+pyright
+pylsp-mypy
