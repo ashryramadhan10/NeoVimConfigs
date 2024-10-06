@@ -44,9 +44,6 @@ Plug 'jmcantrell/vim-virtualenv'
 " Add NeoSolarized colorscheme
 Plug 'Tsuzat/NeoSolarized.nvim', { 'branch': 'master' }
 
-" Add molten-nvim
-Plug 'benlubas/molten-nvim'
-
 call plug#end()
 
 syntax enable
@@ -108,13 +105,6 @@ nnoremap <leader>cm :Commands<CR>
 nnoremap <leader>mp :Maps<CR>
 nnoremap <leader>ht :Helptags<CR>
 nnoremap <leader>ft :Filetypes<CR>
-
-" Molten key mappings
-nnoremap <LocalLeader>mi :MoltenInit<CR>
-nnoremap <LocalLeader>me :MoltenEvaluateLine<CR>
-vnoremap <LocalLeader>me :MoltenEvaluateVisual<CR>
-nnoremap <LocalLeader>md :MoltenDelete<CR>
-nnoremap <LocalLeader>mr :MoltenRestart<CR>
 
 " Visual mode mapping for evaluating selected code
 vnoremap <silent> <LocalLeader>me :<C-u>MoltenEvaluateVisual<CR>
@@ -195,50 +185,3 @@ luafile ~/AppData/Local/nvim/lua/lsp_config.lua
 
 " At the end of your init.vim, add:
 lua require('config')
-
-lua << EOF
-local ok, molten = pcall(require, "molten")
-if ok then
-  print("Molten loaded successfully")
-  
-  -- Set up the plugin
-  if type(molten.setup) == "function" then
-    molten.setup()
-    print("Molten setup completed")
-  end
-
-  -- Create commands
-  vim.api.nvim_create_user_command("MoltenInit", function()
-    if type(molten.setup) == "function" then
-      molten.setup()
-      print("Molten initialized")
-    else
-      print("Molten setup function not available")
-    end
-  end, {})
-
-  vim.api.nvim_create_user_command("MoltenEvaluateLine", function()
-    if type(molten.kernels) == "function" then
-      molten.kernels()
-    else
-      print("Molten kernels function not available")
-    end
-  end, {})
-
-  vim.api.nvim_create_user_command("MoltenAllKernels", function()
-    if type(molten.all_kernels) == "function" then
-      molten.all_kernels()
-    else
-      print("Molten all_kernels function not available")
-    end
-  end, {})
-
-  -- Set up keybindings
-  vim.api.nvim_set_keymap('n', '<LocalLeader>mi', ':MoltenInit<CR>', {noremap = true, silent = true})
-  vim.api.nvim_set_keymap('n', '<LocalLeader>me', ':MoltenEvaluateLine<CR>', {noremap = true, silent = true})
-  vim.api.nvim_set_keymap('n', '<LocalLeader>mk', ':MoltenAllKernels<CR>', {noremap = true, silent = true})
-
-else
-  print("Failed to load molten:", molten)
-end
-EOF
