@@ -186,5 +186,38 @@ luafile ~/AppData/Local/nvim/lua/lsp_config.lua
 " At the end of your init.vim, add:
 lua require('config')
 
-" Add require molten-nvim
-lua require('molten-nvim').setup()
+" Molten-nvim setup
+lua << EOF
+local plugin_dir = vim.fn.stdpath('data') .. '/plugged/molten-nvim/lua'
+package.path = package.path .. ';' .. plugin_dir .. '/?.lua;' .. plugin_dir .. '/?/init.lua'
+
+local init_file = plugin_dir .. '/molten/init.lua'
+if vim.fn.filereadable(init_file) == 0 then
+  vim.fn.mkdir(vim.fn.fnamemodify(init_file, ':h'), 'p')
+  local f = io.open(init_file, "w")
+  if f then
+    f:write("return require('molten.status')")
+    f:close()
+    print("Created " .. init_file)
+  end
+end
+
+local ok, molten = pcall(require, "molten")
+if ok then
+  print("Molten loaded successfully")
+  if type(molten) == "table" and type(molten.setup) == "function" then
+    molten.setup{}
+    print("Molten setup completed")
+  else
+    print("Molten loaded, but setup function not found")
+    print("Molten type: " .. type(molten))
+    if type(molten) == "table" then
+      for k, v in pairs(molten) do
+        print(k, type(v))
+      end
+    end
+  end
+else
+  print("Failed to load molten:", molten)
+end
+EOF
