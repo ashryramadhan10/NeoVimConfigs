@@ -47,7 +47,6 @@ syntax enable
 set background=dark
 colorscheme codedark
 set number
-set wildmenu
 
 " EasyMotion configuration
 " Disable default mappings
