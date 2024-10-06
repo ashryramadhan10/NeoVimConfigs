@@ -41,11 +41,14 @@ Plug 'mg979/vim-visual-multi', {'branch': 'master'}
 " Add vim-virtualenv for Python environment management
 Plug 'jmcantrell/vim-virtualenv'
 
+" Add NeoSolarized colorscheme
+Plug 'Tsuzat/NeoSolarized.nvim', { 'branch': 'master' }
+
 call plug#end()
 
 syntax enable
 set background=dark
-colorscheme codedark
+colorscheme NeoSolarized
 set number
 
 " EasyMotion configuration
@@ -75,6 +78,8 @@ nnoremap <expr> n  'Nn'[v:searchforward]
 nnoremap <expr> N  'nN'[v:searchforward]
 
 " Existing keybindings
+nnoremap  <C-c> "+yy
+nnoremap  <C-G> "+yG
 nnoremap  <C-l> :tabn<CR>
 nnoremap  <C-h> :tabp<CR> 
 nnoremap  <C-n> :tabnew<CR>
@@ -82,7 +87,6 @@ let mapleader = " "
 nnoremap <leader>v <C-V>
 nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFind<CR>
-nnoremap <leader><tab>r :NERDTreeRefreshRoot<CR>
 
 " FZF keybindings
 nnoremap <leader>ff :Files<CR>
