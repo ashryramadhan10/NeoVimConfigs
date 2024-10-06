@@ -1,4 +1,4 @@
-call plug#begin('~/AppData/Local/nvim-data/plugged')
+call plug#begin('C:/Users/ashry/AppData/Local/nvim-data/plugged')
 " Existing plugins
 Plug 'https://github.com/junegunn/vim-easy-align.git'
 Plug 'junegunn/fzf', { 'do': './install --all' }
@@ -108,6 +108,16 @@ nnoremap <leader>cm :Commands<CR>
 nnoremap <leader>mp :Maps<CR>
 nnoremap <leader>ht :Helptags<CR>
 nnoremap <leader>ft :Filetypes<CR>
+
+" Molten key mappings
+nnoremap <LocalLeader>mi :MoltenInit<CR>
+nnoremap <LocalLeader>me :MoltenEvaluateLine<CR>
+vnoremap <LocalLeader>me :MoltenEvaluateVisual<CR>
+nnoremap <LocalLeader>md :MoltenDelete<CR>
+nnoremap <LocalLeader>mr :MoltenRestart<CR>
+
+" Visual mode mapping for evaluating selected code
+vnoremap <silent> <LocalLeader>me :<C-u>MoltenEvaluateVisual<CR>
 
 " EasyMotion mappings
 " 'gs' for 'go search' - search with two characters
