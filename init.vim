@@ -7,6 +7,9 @@ Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'tpope/vim-fireplace', { 'for': 'clojure' }
 Plug '~/my-prototype-plugin'
 Plug 'tomasiser/vim-code-dark'
+Plug 'jmbuhr/otter.nvim'
+Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'quarto-dev/quarto-nvim'
 
 " Add LSP and autocomplete plugins
 Plug 'neovim/nvim-lspconfig'
@@ -45,6 +48,95 @@ Plug 'jmcantrell/vim-virtualenv'
 Plug 'Tsuzat/NeoSolarized.nvim', { 'branch': 'master' }
 
 call plug#end()
+
+" Quatro Configuration
+lua << EOF
+local ok, quarto = pcall(require, "quarto")
+if ok then
+    quarto.setup{
+        lspFeatures = {
+            enabled = true,
+            languages = { 'r', 'python', 'julia' },
+            diagnostics = {
+                enabled = true,
+                triggers = { "BufWrite" }
+            },
+            completion = {
+                enabled = true
+            }
+        }
+    }
+else
+    print("Failed to load Quarto plugin")
+end
+EOF
+
+lua << EOF
+local function quarto_preview()
+  -- Save the current buffer
+  vim.cmd('w')
+  
+  -- Check if the current file is a Quarto document
+  local file_path = vim.fn.expand('%:p')
+  local file_ext = vim.fn.expand('%:e')
+  if file_ext ~= 'qmd' and file_ext ~= 'rmd' then
+    print("This doesn't appear to be a Quarto document. Current file extension: " .. file_ext)
+    return
+  end
+  
+  -- Construct the preview command
+  local preview_command = 'quarto preview "' .. file_path .. '"'
+  
+  -- Create a temporary buffer for output
+  local output_bufnr = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_buf_set_option(output_bufnr, 'buftype', 'nofile')
+  vim.api.nvim_buf_set_option(output_bufnr, 'bufhidden', 'wipe')
+  
+  -- Open a new split with the temporary buffer
+  vim.cmd('below split')
+  vim.api.nvim_win_set_buf(0, output_bufnr)
+  
+  -- Run quarto preview
+  local job_id = vim.fn.jobstart(preview_command, {
+    on_stdout = function(_, data)
+      if data then
+        vim.api.nvim_buf_set_lines(output_bufnr, -1, -1, false, data)
+      end
+    end,
+    on_stderr = function(_, data)
+      if data then
+        vim.api.nvim_buf_set_lines(output_bufnr, -1, -1, false, data)
+      end
+    end,
+    on_exit = function(_, exit_code)
+      if exit_code == 0 then
+        vim.api.nvim_buf_set_lines(output_bufnr, -1, -1, false, {"Quarto preview started successfully."})
+      else
+        vim.api.nvim_buf_set_lines(output_bufnr, -1, -1, false, {"Quarto preview failed to start. Please check the output for errors."})
+      end
+    end
+  })
+  
+  -- Optionally, resize the split (adjust the number as needed)
+  vim.cmd('resize 15')
+  
+  -- Move focus back to the main window
+  vim.cmd('wincmd p')
+end
+
+-- Set up a keymap to use this function
+vim.api.nvim_set_keymap('n', '<leader>qp', ':lua quarto_preview()<CR>', { noremap = true, silent = true })
+EOF
+
+lua << EOF
+local ok, quarto = pcall(require, "quarto")
+if ok then
+    vim.keymap.set('n', '<leader>qp', function() quarto.quartoPreview() end, { silent = true, noremap = true })
+    vim.keymap.set('n', '<leader>qq', function() quarto.quartoClosePreview() end, { silent = true, noremap = true })
+else
+    print("Quarto plugin not found")
+end
+EOF
 
 syntax enable
 set background=dark
@@ -105,9 +197,6 @@ nnoremap <leader>cm :Commands<CR>
 nnoremap <leader>mp :Maps<CR>
 nnoremap <leader>ht :Helptags<CR>
 nnoremap <leader>ft :Filetypes<CR>
-
-" Visual mode mapping for evaluating selected code
-vnoremap <silent> <LocalLeader>me :<C-u>MoltenEvaluateVisual<CR>
 
 " EasyMotion mappings
 " 'gs' for 'go search' - search with two characters
