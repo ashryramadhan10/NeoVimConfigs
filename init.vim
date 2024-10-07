@@ -10,6 +10,8 @@ Plug 'tomasiser/vim-code-dark'
 Plug 'jmbuhr/otter.nvim'
 Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'quarto-dev/quarto-nvim'
+Plug 'benlubas/molten-nvim'
+Plug 'willothy/wezterm.nvim'
 
 " Add LSP and autocomplete plugins
 Plug 'neovim/nvim-lspconfig'
@@ -137,6 +139,19 @@ else
     print("Quarto plugin not found")
 end
 EOF
+
+" Molten Configs
+" Initialize settings for molten-nvim
+let g:molten_auto_open_output = 0 " false
+let g:molten_output_show_more = 1 " true
+let g:molten_image_provider = 'wezterm'
+let g:molten_output_virt_lines = 1 " true
+let g:molten_split_direction = 'right' " options: "right", "left", "top", "bottom"
+let g:molten_split_size = 40 " (0-100) % size of the screen dedicated to the output window
+let g:molten_virt_text_output = 1 " true
+let g:molten_use_border_highlights = 1 " true
+let g:molten_virt_lines_off_by_1 = 1 " true
+let g:molten_auto_image_popup = 0 " false
 
 syntax enable
 set background=dark
