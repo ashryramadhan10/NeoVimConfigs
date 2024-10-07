@@ -1,5 +1,7 @@
 # need python>=3.10
 # pip install 'python-lsp-server[all]'
+# download imagemagick, quatro, wezterm
+# install fzf, ag, ripgrep, bat
 pynvim
 jupyter_client
 notebook
