@@ -49,6 +49,9 @@ Plug 'jmcantrell/vim-virtualenv'
 " Add NeoSolarized colorscheme
 Plug 'Tsuzat/NeoSolarized.nvim', { 'branch': 'master' }
 
+" Add Meatball Notebook
+Plug 'meatballs/notebook.nvim'
+
 call plug#end()
 
 " Quatro Configuration
@@ -140,6 +143,20 @@ else
 end
 EOF
 
+" Jupyter Notebook
+lua << EOF
+require('notebook').setup {
+    -- Whether to insert a blank line at the top of the notebook
+    insert_blank_line = true,
+    -- Whether to display the index number of a cell
+    show_index = true,
+    -- Whether to display the type of a cell
+    show_cell_type = true,
+    -- Style for the virtual text at the top of a cell
+    virtual_text_style = { fg = "lightblue", italic = true },
+}
+EOF
+
 " Molten Configs
 " Initialize settings for molten-nvim
 let g:molten_auto_open_output = 0 " false
@@ -152,6 +169,30 @@ let g:molten_virt_text_output = 1 " true
 let g:molten_use_border_highlights = 1 " true
 let g:molten_virt_lines_off_by_1 = 1 " true
 let g:molten_auto_image_popup = 0 " false
+
+" Initialize the plugin
+nnoremap <silent> <localleader>mi :MoltenInit<CR>
+
+" Run operator selection
+nnoremap <silent> <localleader>e :MoltenEvaluateOperator<CR>
+
+" Evaluate line
+nnoremap <silent> <localleader>rl :MoltenEvaluateLine<CR>
+
+" Re-evaluate cell
+nnoremap <silent> <localleader>rr :MoltenReevaluateCell<CR>
+
+" Evaluate visual selection
+vnoremap <silent> <localleader>r :<C-u>MoltenEvaluateVisual<CR>gv
+
+" Molten delete cell
+nnoremap <silent> <localleader>rd :MoltenDelete<CR>
+
+" Hide output
+nnoremap <silent> <localleader>oh :MoltenHideOutput<CR>
+
+" Show/enter output
+nnoremap <silent> <localleader>os :noautocmd MoltenEnterOutput<CR>
 
 syntax enable
 set background=dark
@@ -175,6 +216,7 @@ nnoremap <expr> n  'Nn'[v:searchforward]
 nnoremap <expr> N  'nN'[v:searchforward]
 
 " Existing keybindings
+vnoremap  <localleader>y "+y
 nnoremap  <C-c> "+yy
 nnoremap  <C-G> "+yG
 nnoremap  <C-l> :tabn<CR>
